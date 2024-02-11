@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import Header from './Header';
-import TodoItem from './TodoItem';
-import ToggleButton from './ToggleButton';
-import AddTodoForm from './AddTodoForm';
-import './TodoList.css';
+import React, { useState, useEffect } from "react";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
+import Header from "./Header";
+import TodoItem from "./TodoItem";
+import ToggleButton from "./ToggleButton";
+import AddTodoForm from "./AddTodoForm";
+import "./TodoList.css";
 
 function TodoList() {
-  const [sortByStatus, setSortByStatus] = useState(false);
-  const [todos, setTodos] = useState([
+  const initialTodos = JSON.parse(localStorage.getItem("todos")) || [
     { id: 1, label: "Learn VueJs", done: true },
     { id: 2, label: "Code a todo list", done: false },
     { id: 3, label: "Learn something else", done: false },
-  ]);
+  ];
+  const [sortByStatus, setSortByStatus] = useState(false);
+  const [todos, setTodos] = useState(initialTodos);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const addItem = (item) => {
     setTodos([
@@ -59,7 +64,11 @@ function TodoList() {
           </CSSTransition>
         ))}
       </TransitionGroup>
-      <ToggleButton label="Move done items at the end?" name="todosort" onToggle={handleToggle} />
+      <ToggleButton
+        label="Move done items at the end?"
+        name="todosort"
+        onToggle={handleToggle}
+      />
       <AddTodoForm addItem={addItem} />
     </main>
   );
